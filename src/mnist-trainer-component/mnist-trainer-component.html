@@ -1,0 +1,43 @@
+<div class="container">
+  <training-chart id="chart"></training-chart>
+  <div class="side-container">
+    <div class="card batch-card">
+      <div class="card-header">
+        <span id="batch-header">Batch</span>
+      </div>
+      <div class="card-content">
+        <label>Loss:</label>
+        <span id="loss-text">0</span>
+        <label>Accuracy:</label>
+        <span id="acc-text">0%</span>
+      </div>
+    </div>
+    <div class="card epoch-card">
+      <div class="card-header">
+        <span id="epoch-header">Epoch</span>
+      </div>
+      <div class="card-content">
+        <label>Val. loss:</label>
+        <span id="val-loss-text">0</span>
+        <label>Val. accuracy:</label>
+        <span id="val-acc-text">0%</span>
+      </div>
+    </div>
+    <div class="card options-card">
+      <div class="card-header">
+        <span>Progress</span>
+      </div>
+      <div class="card-content">
+        <label>Samples:</label>
+        <span id="samples-text">0 / 0</span>
+        <label>Started:</label>
+        <span id="time-text">not yet</span>
+        <label>Remaining:</label>
+        <span id="remaining-text">no idea</span>
+      </div>
+      <div class="card-footer" id="progress-card-footer">
+        <button id="start-button" class="flat-btn">Start training</button>
+      </div>
+    </div>
+  </div>
+</div>

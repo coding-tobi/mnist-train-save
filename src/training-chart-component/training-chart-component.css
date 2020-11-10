@@ -1,0 +1,35 @@
+.container {
+  position: relative;
+}
+
+#chart {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+#tooltip {
+  position: absolute;
+  background-color: #b812b7;
+  border-radius: 4px;
+  color: white;
+  padding: 4px;
+  box-shadow: 1px 1px 3px #00000040;
+}
+
+.line {
+  fill: none;
+}
+
+.batch-line {
+  stroke: #0a7cc4;
+}
+
+.epoch-line {
+  stroke: #b812b7;
+}
+
+.dot {
+  stroke: none;
+  fill: #b812b7;
+}

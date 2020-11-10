@@ -1,0 +1,99 @@
+.container {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 4px;
+}
+
+.side-container {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 4px;
+  flex: 1 1 200px;
+  align-items: stretch;
+}
+
+#chart {
+  border: 2px solid #0a7cc4;
+  border-radius: 4px;
+  min-height: 300px;
+  flex: 1 1 600px;
+}
+
+.card {
+  color: white;
+  border-radius: 4px;
+  flex: 1 1 200px;
+  padding: 8px;
+  display: flex;
+  flex-flow: column;
+}
+
+.card-header {
+  text-align: center;
+  font-size: 1.25em;
+  margin-bottom: 4px;
+}
+
+.card-content {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px;
+  flex: 1 0 auto;
+}
+
+.card-content > label {
+  font-weight: bolder;
+  grid-column: 1 / 2;
+}
+
+.card-content > span {
+  grid-column: 2 / 3;
+}
+
+.card-footer {
+  margin-top: 4px;
+  display: flex;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+
+.card-footer > button {
+  justify-self: flex-end;
+}
+
+.batch-card {
+  background-color: #0a7cc4;
+  min-height: 100px;
+}
+
+.epoch-card {
+  background-color: #b812b7;
+  min-height: 100px;
+}
+
+.options-card {
+  background-color: #00b89c;
+  min-height: 100px;
+  display: flex;
+}
+
+.flat-btn {
+  background: white;
+  border: none;
+  outline: none;
+  box-shadow: 1px 1px 3px #00000040;
+  color: hsl(0, 0%, 21%);
+  height: 1.7em;
+  border-radius: 0.85em;
+  transition: 100ms ease-in-out box-shadow, 100ms ease-in-out background;
+}
+
+.flat-btn:hover {
+  box-shadow: 2px 2px 4px #00000040;
+  background: #f5f5f5;
+  cursor: pointer;
+}
+
+.flat-btn:active {
+  box-shadow: 0 0 1px #00000040;
+}
