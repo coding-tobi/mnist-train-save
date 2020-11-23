@@ -1,6 +1,6 @@
 # mnist-train-save
 
-Loads handwritten digits from [THE MNIST DATABASE](http://yann.lecun.com/exdb/mnist/); trains a CNN to recognize handwritten digits in the browser; the progress is visualized with d3.
+Loads handwritten digits from [THE MNIST DATABASE](http://yann.lecun.com/exdb/mnist/); trains a CNN to recognize handwritten digits in the browser with tensorflow.js; the progress is visualized with d3.
 
 # Get it running
 
