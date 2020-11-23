@@ -3,7 +3,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
   entry: {
-    "mnist-load-display": "./src/index.ts",
+    "mnist-train-save": "./src/index.ts",
   },
   mode: "production",
   module: {

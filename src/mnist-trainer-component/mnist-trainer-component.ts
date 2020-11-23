@@ -17,7 +17,7 @@ const TEST_LABELS_URL = "ressources/t10k-labels-idx1-ubyte.gz";
 
 const BATCH_SIZE = 512;
 const VALIDATION_BATCH_SIZE = 4096;
-const EPOCHS = 5;
+const EPOCHS = 25;
 
 @ComponentDecorator({
   selector: "mnist-trainer",
@@ -29,6 +29,9 @@ export default class MnistTrainerComponent extends Component {
   private _testDataset: MnistDataLoader;
   private _model: tf.LayersModel;
 
+  private _batchSize = BATCH_SIZE;
+  private _epochs = EPOCHS;
+
   private _batchesPerEpoch = 0;
   private _curBatch = 0;
   private _batchCounter = 0;
@@ -38,15 +41,13 @@ export default class MnistTrainerComponent extends Component {
   private _curValLoss = 0;
   private _curValAcc = 0;
   private _trainingStarted = false;
+  private _trainingFinished = false;
   private _trainStartTime = moment();
 
   constructor() {
     super();
-    this._trainDataset = new MnistDataLoader(
-      TRAIN_IMAGES_URL,
-      TRAIN_LABELS_URL
-    );
-    this._testDataset = new MnistDataLoader(TEST_IMAGES_URL, TEST_LABELS_URL);
+    this._trainDataset = new MnistDataLoader();
+    this._testDataset = new MnistDataLoader();
     this._model = this.createModel();
   }
 
@@ -55,24 +56,41 @@ export default class MnistTrainerComponent extends Component {
     const startButton = this.getChildById("start-button");
     startButton.onclick = async () => {
       startButton.remove();
+
+      // Read attributes
+      const trainImagesUrl =
+        this.getAttribute("train-images") || TRAIN_IMAGES_URL;
+      const trainLabelsUrl =
+        this.getAttribute("train-labels") || TRAIN_LABELS_URL;
+      const testImagesUrl = this.getAttribute("test-images") || TEST_IMAGES_URL;
+      const testLabelsUrl = this.getAttribute("test-labels") || TEST_LABELS_URL;
+      const valBatchSize = parseInt(
+        this.getAttribute("val-batch-size") || VALIDATION_BATCH_SIZE.toString()
+      );
+      this._batchSize = parseInt(
+        this.getAttribute("batch-size") || BATCH_SIZE.toString()
+      );
+      this._epochs = parseInt(this.getAttribute("epochs") || EPOCHS.toString());
+
+      const trainingChart = this.getChildById<TrainingChartComponent>("chart");
+      await this._trainDataset.load(trainImagesUrl, trainLabelsUrl);
+      await this._testDataset.load(testImagesUrl, testLabelsUrl);
+
       this._trainStartTime = moment();
       this._trainingStarted = true;
-      const trainingChart = this.getChildById<TrainingChartComponent>("chart");
-      await this._trainDataset.load();
-      await this._testDataset.load();
 
       this._batchesPerEpoch = Math.floor(
-        this._trainDataset.numberOfImages / BATCH_SIZE
+        this._trainDataset.numberOfImages / this._batchSize
       );
 
       const trainDataset = tf.data.func(() =>
-        this._trainDataset.nextBatch(BATCH_SIZE)
+        this._trainDataset.nextBatch(this._batchSize)
       );
-      const valData = this._testDataset.nextBatch(VALIDATION_BATCH_SIZE).value;
+      const valData = this._testDataset.nextBatch(valBatchSize).value;
       let batchOffset = 0;
 
       this._model.fitDataset(trainDataset, {
-        epochs: EPOCHS,
+        epochs: this._epochs,
         validationData: [valData.xs, valData.ys],
         callbacks: {
           onBatchEnd: (batch, logs) => {
@@ -108,6 +126,7 @@ export default class MnistTrainerComponent extends Component {
             this.render();
           },
           onTrainEnd: () => {
+            this._trainingFinished = true;
             const saveButton = document.createElement("button");
             saveButton.textContent = "save model";
             saveButton.className = "flat-btn";
@@ -115,17 +134,22 @@ export default class MnistTrainerComponent extends Component {
               this._model.save("downloads://mnist-cnn-model");
             };
             this.getChildById("progress-card-footer").appendChild(saveButton);
+            this.render();
           },
         },
       });
     };
   }
 
-  protected disconnected() {}
+  protected disconnected() {
+    this._model?.dispose();
+    tf.dispose();
+    tf.disposeVariables();
+  }
 
   private render() {
-    const curSample = this._batchCounter * BATCH_SIZE;
-    const samples = this._trainDataset.numberOfImages * EPOCHS;
+    const curSample = this._batchCounter * this._batchSize;
+    const samples = this._trainDataset.numberOfImages * this._epochs;
 
     const numberFormat = d3.format(".3f");
     const siNumberFormat = d3.format(".3s");
@@ -139,7 +163,7 @@ export default class MnistTrainerComponent extends Component {
     this.select("epoch-header")
       .datum({
         curEpoch: this._curEpoch,
-        epochs: EPOCHS,
+        epochs: this._epochs,
       })
       .text((d) => `Epoch (${d.curEpoch} / ${d.epochs})`);
     this.select("loss-text")
@@ -171,18 +195,26 @@ export default class MnistTrainerComponent extends Component {
       .text((d) => (d.started ? d.fromNow : "not yet"));
     this.select("remaining-text")
       .datum({
-        started: 0 < curSample,
+        started: this._trainingStarted,
+        finished: this._trainingFinished,
         remaining: moment.duration(
           (moment().diff(this._trainStartTime) / curSample) *
             (samples - curSample)
         ),
       })
-      .text((d) => (d.started ? d.remaining.humanize() : "no idea"));
+      .text((d) =>
+        d.started
+          ? this._trainingFinished
+            ? "finished"
+            : d.remaining.humanize()
+          : "no idea"
+      );
   }
 
   private select(id: string) {
     return d3.select(this.getChildById(id));
   }
+
   private createModel() {
     const model = tf.sequential();
     model.add(

@@ -38,12 +38,10 @@ export default class MnistDataLoader {
     return this._numberOfColumns;
   }
 
-  constructor(private imagesUrl: string, private labelsUrl: string) {}
-
-  public async load(): Promise<void> {
+  public async load(imagesUrl: string, labelsUrl: string): Promise<void> {
     const [imagesResponse, labelsResponse] = await Promise.all([
-      fetch(this.imagesUrl),
-      fetch(this.labelsUrl),
+      fetch(imagesUrl),
+      fetch(labelsUrl),
     ]);
 
     if (imagesResponse.body && labelsResponse.body) {

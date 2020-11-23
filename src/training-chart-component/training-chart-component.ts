@@ -115,8 +115,8 @@ export default class TrainingChartComponent extends Component {
       tooltip.select("#epoch").text(d.epoch);
       tooltip.select("#acc").text((d.acc * 100.0).toString().slice(0, 5) + "%");
       tooltip
-        .style("left", e.clientX + "px")
-        .style("top", e.clientY + "px")
+        .style("left", (e.offsetX + 5) + "px")
+        .style("top", (e.offsetY + 5) + "px")
         .transition()
         .duration(150)
         .style("opacity", 1.0);

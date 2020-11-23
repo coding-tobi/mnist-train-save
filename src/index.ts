@@ -24,4 +24,5 @@
 import "./mnist-trainer-component/mnist-trainer-component";
 import "./training-chart-component/training-chart-component";
 
+// Check out the decorators!
 // window.customElements.define("mnist-trainer", MnistTrainerComponent);
